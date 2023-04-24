@@ -45,6 +45,32 @@ void loop()
 {
   int sensorStatus = digitalRead(IRSensor);
   static unsigned long timer = millis();
+
+  switch(sensorStatus) {
+    case 0:
+      myDFPlayer.play(0);
+      break;
+    case 1:
+      myDFPlayer.play(1);
+      break;
+    case 2:
+      myDFPlayer.play(2);
+      break;
+    case 3:
+      myDFPlayer.play(3);
+      break;
+    case 4:
+      myDFPlayer.play(4);
+      break;
+    case 5:
+      myDFPlayer.play(5);
+      break;
+    case 6:
+      myDFPlayer.play(6);
+      break;
+    default:
+      ;
+  }
   
   if (i > 6) i = 0;
   
