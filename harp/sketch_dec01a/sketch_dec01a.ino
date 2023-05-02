@@ -19,6 +19,8 @@ int cnt = 0;
 #define A4 5
 #define B4 6
 
+int sensorStatus[7];
+
 SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 void printDetail(uint8_t type, int value);
@@ -47,14 +49,19 @@ void setup()
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
 }
 
-void loop()
-{
-  int sensorStatus[7];
+void checkStatus() {
   for (int i = 0; i < 7; ++i) {
     sensorStatus[i] = digitalRead(i);
   }
-  
-  static unsigned long timer = millis();
+}
+
+void clearStatus() {
+  for (int i = 0; i < 7; ++i) {
+    sensorStatus[i] = 0;
+  }
+}
+
+void playNote() {
   for (int i = 0; i < 7; ++i) {
     switch(sensorStatus[i]) {
       case 0:
@@ -66,12 +73,11 @@ void loop()
         ;
     }
   }
-  
-  if (cnt > 6) cnt = 0;
-  
-  if (millis() - timer > 3000) {
-    cnt++;
-    timer = millis();
-    myDFPlayer.play(cnt);  //Play next mp3 every 3 second.
-  }
+}
+
+void loop()
+{
+  checkStatus();
+  playNote();
+  clearStatus();
 }
