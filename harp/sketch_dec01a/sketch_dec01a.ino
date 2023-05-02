@@ -2,8 +2,14 @@
 #include "SoftwareSerial.h"
 #include "DFRobotDFPlayerMini.h"
 
-int i = 0;
-#define IRSensor 9
+int cnt = 0;
+#define IRSensorC4 0
+#define IRSensorD4 1
+#define IRSensorE4 2
+#define IRSensorF4 3
+#define IRSensorG4 4
+#define IRSensorA4 5
+#define IRSensorB4 6
 
 #define C4 0
 #define D4 1
@@ -19,9 +25,9 @@ void printDetail(uint8_t type, int value);
 
 void setup()
 {
-
-  pinMode(IRSensor, INPUT); // set pinmod for ir sensor to output
-  
+  for (int i = 0; i < 7; ++i) {
+    pinMode(i, INPUT); // set pinmod for ir sensor to output
+  }
   mySoftwareSerial.begin(9600);
   
   if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
@@ -43,40 +49,29 @@ void setup()
 
 void loop()
 {
-  int sensorStatus = digitalRead(IRSensor);
-  static unsigned long timer = millis();
-
-  switch(sensorStatus) {
-    case 0:
-      myDFPlayer.play(0);
-      break;
-    case 1:
-      myDFPlayer.play(1);
-      break;
-    case 2:
-      myDFPlayer.play(2);
-      break;
-    case 3:
-      myDFPlayer.play(3);
-      break;
-    case 4:
-      myDFPlayer.play(4);
-      break;
-    case 5:
-      myDFPlayer.play(5);
-      break;
-    case 6:
-      myDFPlayer.play(6);
-      break;
-    default:
-      ;
+  int sensorStatus[7];
+  for (int i = 0; i < 7; ++i) {
+    sensorStatus[i] = digitalRead(i);
   }
   
-  if (i > 6) i = 0;
+  static unsigned long timer = millis();
+  for (int i = 0; i < 7; ++i) {
+    switch(sensorStatus[i]) {
+      case 0:
+        break;
+      case 1:
+        myDFPlayer.play(i);
+        break;
+      default:
+        ;
+    }
+  }
+  
+  if (cnt > 6) cnt = 0;
   
   if (millis() - timer > 3000) {
-    i++;
+    cnt++;
     timer = millis();
-    myDFPlayer.play(i);  //Play next mp3 every 3 second.
+    myDFPlayer.play(cnt);  //Play next mp3 every 3 second.
   }
 }
